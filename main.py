@@ -15,7 +15,7 @@ dispenser = algorand.account.dispenser()
 
 #Create a Wallet & first algorand account
 creator = algorand.account.random()
-print("Creator Address:", creator.address)
+#print("Creator Address:", creator.address)
 #print(algorand.account.get_information(creator.address))
 
 #Create first transaction
@@ -23,7 +23,7 @@ algorand.send.payment(
     PayParams(
         sender=dispenser.address,
         receiver=creator.address,
-        amount=10_000_000,
+        amount=10_000_000
     )
 )
 
@@ -45,22 +45,14 @@ sent_txn = algorand.send.asset_create(
 
 #Extract asset ID to identify in blockchain
 asset_id = sent_txn["confirmation"]["asset-index"]
-print("Asset ID", asset_id)
+#print("Asset ID", asset_id)
 
 
 # Create the receiver
 receiver_vrads = algorand.account.random()
-print("Receiver Address:", receiver_vrads.address)
+#print("Receiver Address:", receiver_vrads.address)
 
 # Transfer the asset from creator to receiver
-asset_transfer = algorand.send.asset_transfer(
-    AssetTransferParams(
-        sender=creator.address,
-        receiver=receiver_vrads.address,
-        asset_id=asset_id,
-        amount=10
-    )
-)
 
 algorand.send.payment(
     PayParams(
@@ -99,7 +91,7 @@ group_tx.add_asset_transfer(
 
 group_tx.execute()
 
-print(algorand.account.get_information(receiver_vrads.address))
+#print(algorand.account.get_information(receiver_vrads.address))
 
 print("Receiver Account Asset Balance:", algorand.account.get_information(receiver_vrads.address)['assets'][0]['amount'])
 print("Creator Account Asset Balance:", algorand.account.get_information(creator.address)['assets'][0]['amount'])
@@ -107,9 +99,14 @@ print("Creator Account Asset Balance:", algorand.account.get_information(creator
 algorand.send.asset_transfer(
     AssetTransferParams(
         sender=creator.address,
-
+        receiver=creator.address,
         asset_id=asset_id,
-
+        amount=2,
         clawback_target=receiver_vrads.address
     )
 )
+
+print("Post clawback")
+
+print("Receiver Account Asset Balance:", algorand.account.get_information(receiver_vrads.address)['assets'][0]['amount'])
+print("Creator Account Asset Balance:", algorand.account.get_information(creator.address)['assets'][0]['amount'])
